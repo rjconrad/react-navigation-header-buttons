@@ -1,30 +1,30 @@
 /*
  * @flow
  */
-import * as React from 'react';
+import * as React from "react";
 import {
   View,
   UIManager,
   findNodeHandle,
   StyleSheet,
   ActionSheetIOS,
-  Platform,
-} from 'react-native';
-import { HeaderButton, type VisibleButtonProps } from './HeaderButton';
-import type { ViewStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
-export const OVERFLOW_BUTTON_TEST_ID = 'headerOverflowButton';
+  Platform
+} from "react-native";
+import { HeaderButton, type VisibleButtonProps } from "./HeaderButton";
+import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
+export const OVERFLOW_BUTTON_TEST_ID = "headerOverflowButton";
 
-export const IS_IOS = Platform.OS === 'ios';
+export const IS_IOS = Platform.OS === "ios";
 
 export type OverflowButtonProps = {
   OverflowIcon: React.Element<*>,
-  onOverflowMenuPress?: ({ hiddenButtons: Array<React.Element<*>> }) => any,
+  onOverflowMenuPress?: ({ hiddenButtons: Array<React.Element<*>> }) => any
 };
 
 type Props = {
   hiddenButtons: Array<React.Element<*>>,
   buttonWrapperStyle?: ViewStyleProp,
-  ...$Exact<OverflowButtonProps>,
+  ...$Exact<OverflowButtonProps>
 };
 
 export class OverflowButton extends React.Component<Props> {
@@ -56,7 +56,10 @@ export class OverflowButton extends React.Component<Props> {
   showOverflowPopup = () => {
     const { onOverflowMenuPress, hiddenButtons } = this.props;
     if (onOverflowMenuPress) {
-      onOverflowMenuPress({ hiddenButtons, overflowButtonRef: this.overflowRef });
+      onOverflowMenuPress({
+        hiddenButtons,
+        overflowButtonRef: this.overflowRef
+      });
     } else {
       IS_IOS ? this.showPopupIos() : this.showPopupAndroid();
     }
@@ -74,22 +77,23 @@ export class OverflowButton extends React.Component<Props> {
   }
 
   onHiddenItemPress = (eventName: string, index: number) => {
-    if (eventName !== 'itemSelected') return;
+    if (eventName !== "itemSelected") return;
     this.props.hiddenButtons[index].props.onPress();
   };
 
   showPopupIos() {
     let actionTitles = this.props.hiddenButtons.map(btn => btn.props.title);
-    actionTitles.push('cancel');
+    const cancelText = this.props.cancelButtonText || "Cancel";
+    actionTitles.push(cancelText);
 
     ActionSheetIOS.showActionSheetWithOptions(
       {
         options: actionTitles,
-        cancelButtonIndex: actionTitles.length - 1,
+        cancelButtonIndex: actionTitles.length - 1
       },
       (buttonIndex: number) => {
         if (buttonIndex !== actionTitles.length - 1) {
-          this.onHiddenItemPress('itemSelected', buttonIndex);
+          this.onHiddenItemPress("itemSelected", buttonIndex);
         }
       }
     );
@@ -98,21 +102,21 @@ export class OverflowButton extends React.Component<Props> {
 
 const styles = StyleSheet.create({
   overflowMenuView: {
-    position: 'absolute',
+    position: "absolute",
     top: -10,
     // TODO android actually has a little gap on the right of the menu
     right: 0,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     width: 1,
-    height: 1,
+    height: 1
   },
   icon: {
     marginTop: 2,
     ...Platform.select({
       android: {
         marginRight: 9,
-        marginLeft: 7,
-      },
-    }),
-  },
+        marginLeft: 7
+      }
+    })
+  }
 });
